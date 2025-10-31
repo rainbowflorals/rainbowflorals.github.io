@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Wedding Collection – Rainbow Florals</title>
+  <meta name="description" content="Wedding Collection by Rainbow Florals." />
+  <meta name="theme-color" content="#E6A6C9" />
+  <link rel="icon" href="assets/favicon-static.png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="container">
+      <span>Call: <a href="tel:+13312132055">(331) 213-2055</a></span>
+      <span>•</span>
+      <span>Email: <a href="mailto:Rainbowflorals9@gmail.com">Rainbowflorals9@gmail.com</a></span>
+      <a class="instagram" href="https://www.instagram.com/rainbow_florals_/" target="_blank">Insta: rainbow_florals_</a>
+      <a class="whatsapp" href="https://wa.me/13312132055" target="_blank">WhatsApp us</a>
+    </div>
+  </div>
+
+  <header class="header container">
+    <div class="brand">
+      <img src="assets/logo-mark.jpeg" alt="RF mark" />
+      <div><h1>Rainbow Florals</h1><p class="tagline">We Fine Florals</p></div>
+    </div>
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+    <nav id="siteNav" class="nav">
+      <a href="index.html#collections">Collections</a>
+      <a href="wedding.html">Wedding</a>
+      <a href="temple.html">Temple</a>
+      <a href="religious.html">Religious</a>
+      <a href="flower-bunches.html">Bunches</a>
+      <a href="sympathy.html">Sympathy</a>
+      <a href="custom.html">Customize</a>
+    </nav>
+  </header>
+
+  <section class="container section" style="padding-top:24px">
+    <div class="section-head">
+      <h3>Wedding Collection</h3>
+      <p>Search by name or SKU.</p>
+    </div>
+    <div class="search" style="max-width:520px;margin:0 0 18px 0">
+      <input id="searchInput" type="search" placeholder="e.g., Rosetta, RF-WED-..." />
+    </div>
+
+    <div id="gallery" class="gallery"></div>
+
+    <template id="cardTemplate">
+      <article class="card">
+        <div class="thumb-wrap"><img class="thumb" src="" alt="" loading="lazy" /></div>
+        <div class="card-body">
+          <h4 class="card-title"></h4>
+          <p class="card-meta"></p>
+          <p class="card-desc"></p>
+          <div class="card-actions">
+            <a class="btn sm ghost" href="#" data-open>View</a>
+            <a class="btn sm primary" data-wa target="_blank">WhatsApp</a>
+          </div>
+        </div>
+      </article>
+    </template>
+  </section>
+
+  <div id="lightbox" class="lightbox" hidden>
+    <button class="lightbox-close">&times;</button>
+    <img id="lightboxImg" alt="" />
+    <div id="lightboxCaption" class="lightbox-caption"></div>
+  </div>
+
+  <script>
+    const ITEMS = [
+      {
+        "sku": "RF-WED-20251030-001",
+        "title": "Rosetta Bridal Bouquet",
+        "category": "Wedding Collection",
+        "image": "assets/products/wedding/wedding-01.jpg",
+        "description": "Soft pink roses with eucalyptus and a satin wrap."
+      },
+      {
+        "sku": "RF-WED-20251030-002",
+        "title": "Pastel Reception Centerpiece",
+        "category": "Wedding Collection",
+        "image": "assets/products/wedding/wedding-02.jpg",
+        "description": "Low pastel centerpiece perfect for round tables."
+      }
+    ];
+
+    const GALLERY=document.getElementById("gallery"),SEARCH=document.getElementById("searchInput"),TPL=document.getElementById("cardTemplate");
+    let VISIBLE=[...ITEMS];
+
+    function render(){
+      GALLERY.innerHTML="";
+      if(!VISIBLE.length){GALLERY.innerHTML="<p>No results found.</p>";return;}
+      VISIBLE.forEach(p=>{
+        const node=TPL.content.cloneNode(true),img=node.querySelector(".thumb");
+        node.querySelector(".card").dataset.sku=p.sku;
+        img.src=p.image;img.alt=p.title;
+        img.onerror=()=>img.src="assets/products/placeholder.jpg";
+        node.querySelector(".card-title").textContent=p.title;
+        node.querySelector(".card-meta").textContent=`SKU ${p.sku}`;
+        node.querySelector(".card-desc").textContent=p.description;
+        node.querySelector("[data-open]").onclick=e=>{e.preventDefault();openLightbox(p)};
+        const msg=encodeURIComponent(`Hi Rainbow Florals! I'm interested in "${p.title}" (SKU ${p.sku}). Could you share pricing and availability?`);
+        node.querySelector("[data-wa]").href=`https://wa.me/13312132055?text=${msg}`;
+        GALLERY.append(node);
+      });
+    }
+
+    function applySearch(){
+      const q=(SEARCH.value||"").toLowerCase().trim();
+      VISIBLE=ITEMS.filter(p=>`${p.title} ${p.description} ${p.sku}`.toLowerCase().includes(q));
+      render();
+    }
+
+    function openLightbox(p){
+      const lb=document.getElementById("lightbox"),img=document.getElementById("lightboxImg"),cap=document.getElementById("lightboxCaption");
+      img.src=p.image;img.alt=p.title;cap.textContent=`${p.title} — SKU ${p.sku}`;lb.hidden=false;
+    }
+
+    document.querySelector(".lightbox-close").onclick=()=>document.getElementById("lightbox").hidden=true;
+    document.getElementById("lightbox").onclick=e=>{if(e.target.id==="lightbox")e.currentTarget.hidden=true};
+    document.onkeydown=e=>{if(e.key==="Escape")document.getElementById("lightbox").hidden=true};
+    SEARCH.oninput=applySearch;render();
+  </script>
+
+  <script src="script.js"></script>
+</body>
+</html>
